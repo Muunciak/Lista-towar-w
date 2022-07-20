@@ -83,7 +83,7 @@ namespace Lista_towarów
             int columnIndex = dgvDataList.CurrentCell.ColumnIndex;
             string columnName = dgvDataList.Columns[columnIndex].Name; ;
             Regex regex = new Regex(@"Column[0-9]*");
-            string cs = @"Data Source = (LocalDB)\MSSQLLocalDB; AttachDbFilename = 'C:\Users\Mariusz\source\repos\Lista-towar-w\Lista towarów\Database1.mdf'; Integrated Security = True";
+            string cs = @"Data Source = (LocalDB)\MSSQLLocalDB; AttachDbFilename = ''; Integrated Security = True";
             string StrQuery;
             try
             {
