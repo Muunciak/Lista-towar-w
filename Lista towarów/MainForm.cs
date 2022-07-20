@@ -81,9 +81,9 @@ namespace Lista_towarów
         private void btnInsertDB_Click(object sender, EventArgs e)
         {
             int columnIndex = dgvDataList.CurrentCell.ColumnIndex;
-            string columnName = dgvDataList.Columns[columnIndex].Name;
+            string columnName = dgvDataList.Columns[columnIndex].Name; ;
             Regex regex = new Regex(@"Column[0-9]*");
-            string cs = @"Data Source=DESKTOP-JT8L13H\SQLEXPRESS;Initial Catalog=master;Integrated Security=True";
+            string cs = @"Data Source = (LocalDB)\MSSQLLocalDB; AttachDbFilename = 'C:\Users\Mariusz\source\repos\Lista-towar-w\Lista towarów\Database1.mdf'; Integrated Security = True";
             string StrQuery;
             try
             {
@@ -93,38 +93,37 @@ namespace Lista_towarów
                     {
                         comm.Connection = conn;
                         conn.Open();
-                        //for (int i = 0; i < dgvDataList.Columns.Count; i++)
-                        //{
+                        for (columnIndex = 0; columnIndex < dgvDataList.Columns.Count; columnIndex++)
+                        {
+                            columnName = dgvDataList.Columns[columnIndex].Name;
                             if (!regex.IsMatch(columnName))
                             {
                                 StrQuery = @"ALTER TABLE FileTable ADD " + columnName + " varchar (255);";
+                                MessageBox.Show("columnIndex= " + columnIndex + "| columnName= " + columnName);
+                                comm.CommandText = StrQuery;
+                                comm.ExecuteNonQuery();
                             }
-                            else
-                            {
-                            MessageBox.Show("Błąd");
-                               // i++;
-                            }
-                        //}
+                        }
                         for (int i = 0; i < dgvDataList.Rows.Count; i++)
                         {
                             if (!regex.IsMatch(columnName))
                             {
-                                StrQuery = @"INSERT INTO FileTable " + columnName + " VALUES (" + dgvDataList.Rows[i].Cells[columnName].Value + "); ";
+                                StrQuery = @"INSERT INTO FileTable VALUES (" + dgvDataList.Rows[i].Cells[columnName].Value + "); ";
                                 comm.CommandText = StrQuery;
                                 comm.ExecuteNonQuery();
-                            }
-                            else
-                            {
-                                i++;
-
+                                MessageBox.Show("columnIndex= " + columnIndex + "| columnName= " + columnName);
                             }
                         }
                     }
                 }
             }
-            catch (Exception ex)
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show("Wystąpił błąd: " + ex.Message);
+            //}
+            finally
             {
-                MessageBox.Show("Wystąpił błąd: " + ex.Message);
+                MessageBox.Show("Baza danych została zaktualizowana.");
             }
         }
     }

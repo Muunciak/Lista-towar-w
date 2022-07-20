@@ -1,0 +1,3 @@
+﻿CREATE TABLE FileTable (
+ID INT NOT NULL
+);
