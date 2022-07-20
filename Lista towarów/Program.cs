@@ -16,7 +16,7 @@ namespace Lista_towarów
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new csvReader());
+            Application.Run(new ExcelReader());
         }
     }
 }
