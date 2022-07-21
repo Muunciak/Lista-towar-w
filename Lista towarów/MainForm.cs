@@ -80,10 +80,10 @@ namespace Lista_towarów
 
         private void btnInsertDB_Click(object sender, EventArgs e)
         {
-            int columnIndex = dgvDataList.CurrentCell.ColumnIndex;
-            string columnName = dgvDataList.Columns[columnIndex].Name; ;
+             int columnIndex = dgvDataList.CurrentCell.ColumnIndex, s,i;
+            string columnName = dgvDataList.Columns[columnIndex].Name;
             Regex regex = new Regex(@"Column[0-9]*");
-            string cs = @"Data Source = (LocalDB)\MSSQLLocalDB; AttachDbFilename = ''; Integrated Security = True";
+            string cs = @"Data Source=DESKTOP-JT8L13H\SQLEXPRESS;Initial Catalog=DB1;Integrated Security=True";
             string StrQuery;
             try
             {
@@ -93,34 +93,52 @@ namespace Lista_towarów
                     {
                         comm.Connection = conn;
                         conn.Open();
+                        s = 0;
                         for (columnIndex = 0; columnIndex < dgvDataList.Columns.Count; columnIndex++)
                         {
+                            if (s == 0)
+                            {
+                                StrQuery = @"CREATE TABLE FileTable (ID INT NOT NULL);";
+                                comm.CommandText = StrQuery;
+                                comm.ExecuteNonQuery();
+                                s++;
+                            }
                             columnName = dgvDataList.Columns[columnIndex].Name;
                             if (!regex.IsMatch(columnName))
-                            {
-                                StrQuery = @"ALTER TABLE FileTable ADD " + columnName + " varchar (255);";
-                                MessageBox.Show("columnIndex= " + columnIndex + "| columnName= " + columnName);
-                                comm.CommandText = StrQuery;
-                                comm.ExecuteNonQuery();
+                            { 
+                                    StrQuery = @"ALTER TABLE FileTable ADD [" + columnName + "] text;";
+                                    comm.CommandText = StrQuery;
+                                    comm.ExecuteNonQuery();
                             }
                         }
-                        for (int i = 0; i < dgvDataList.Rows.Count; i++)
-                        {
-                            if (!regex.IsMatch(columnName))
+                        for(int k=0; k<dgvDataList.Rows.Count - 1; k++)
+                        { 
+                            StrQuery = @"INSERT INTO FileTable (ID) VALUES (" + k + ");";
+                            comm.CommandText = StrQuery;
+                            comm.ExecuteNonQuery();
+                            MessageBox.Show(StrQuery);
+                        }
+                        for (columnIndex = 0; columnIndex < dgvDataList.Columns.Count - 1; columnIndex++)
+                        { 
+                            for (i = 0; i < dgvDataList.Rows.Count - 1; i++)
                             {
-                                StrQuery = @"INSERT INTO FileTable VALUES (" + dgvDataList.Rows[i].Cells[columnName].Value + "); ";
-                                comm.CommandText = StrQuery;
-                                comm.ExecuteNonQuery();
-                                MessageBox.Show("columnIndex= " + columnIndex + "| columnName= " + columnName);
+                                columnName = dgvDataList.Columns[columnIndex].Name;
+                                if (!regex.IsMatch(columnName))
+                                {
+                                        StrQuery = @"UPDATE FileTable SET [" + columnName + "] = '(" + dgvDataList.Rows[i].Cells[columnName].Value + ")' WHERE ID = '" + i + "';";
+                                        comm.CommandText = StrQuery;
+                                        comm.ExecuteNonQuery();
+                                        MessageBox.Show(StrQuery);
+                                }
                             }
                         }
                     }
                 }
             }
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show("Wystąpił błąd: " + ex.Message);
-            //}
+            catch (Exception ex)
+            {
+                MessageBox.Show("Wystąpił błąd: " + ex.Message);
+            }
             finally
             {
                 MessageBox.Show("Baza danych została zaktualizowana.");
